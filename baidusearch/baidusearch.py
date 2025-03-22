@@ -41,7 +41,7 @@ HEADERS = {
 }
 
 baidu_host_url = "https://www.baidu.com"
-baidu_search_url = "https://www.baidu.com/s?ie=utf-8&tn=baidu&wd="
+baidu_search_url = "https://www.baidu.com/s?&wd="
 
 session = requests.Session()
 session.headers = HEADERS
@@ -132,6 +132,11 @@ def parse_html(url, rank_start=0, debug=0):
                     if div.h3:
                         title = div.h3.text.strip()
                         url = div.h3.a['href'].strip()
+                        baidu_url = requests.get(url=url, headers=HEADERS, allow_redirects=False)
+                        #得到网页原始地址
+                        real_url = baidu_url.headers['Location']  
+                        if real_url.startswith('http'):
+                            url = real_url
                     else:
                         title = div.text.strip().split("\n", 1)[0]
                         url = div.a['href'].strip()
@@ -255,4 +260,6 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    # run()
+    result = search("nlp", num_results=10, debug=0)
+    print(result)
